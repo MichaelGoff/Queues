@@ -5,6 +5,11 @@ var fs      = require('fs')
 var app = express()
 // REDIS
 var client = redis.createClient(6379, '127.0.0.1', {})
+client.del("servers");
+
+var startPort = 3000;
+var additionalServers = 0;
+var servers = {};
 
 ///////////// WEB ROUTES
 
@@ -73,14 +78,41 @@ app.get('/meow', function(req, res) {
    	res.end();
 	});
   client.ltrim("images", 1, -1);
-})
+});
+
+
+app.get('/spawn', function(req, res) {
+  additionalServers += 1;
+  var newPort = startPort + additionalServers;
+  servers[newPort] = app.listen(newPort, function() {
+    var host = servers[newPort].address().address;
+    var port = servers[newPort].address().port;
+    client.sadd("servers", port);
+    res.send("Server started on " + port);
+  });
+});
+
+app.get('/destroy', function(req, res) {
+  client.spop("servers", function(err, value) {
+    servers[value].close(function() {
+      res.send("Server closed on port " + value);
+    });
+  });
+});
+
+app.get('/listservers', function(req, res) {
+  client.smembers("servers", function(err, value) {
+    res.send(value);
+  });
+});
 
 // HTTP SERVER
-var server = app.listen(3000, function () {
+servers[startPort] = app.listen(startPort, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = servers[startPort].address().address
+  var port = servers[startPort].address().port
 
+  client.sadd("servers", port);
   console.log('Example app listening at http://%s:%s', host, port)
 })
 
