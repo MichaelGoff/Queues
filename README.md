@@ -13,7 +13,12 @@ Cache, Proxies, Queues
    - a) traffic that peaks on Monday evenings
        - Spin up some additional servers during Monday evenings to help handle the additional load. 
    - b) real time and concurrent connections with peers
+       - Implement regional servers so users will connect to the server they have the best connection with which helps reduce latency.
    - c) heavy upload traffic
+       - Use a 3rd party service to handle large files so you don't have to tax your own servers with handling lots of data at once which can help to prevent DDOS attacks.
+       
+## Video Link
+[Click here for Screencast](https://youtu.be/BTm16DnPcsM)
 
 
 
