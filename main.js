@@ -113,6 +113,25 @@ servers[startPort] = app.listen(startPort, function () {
   var port = servers[startPort].address().port
 
   client.sadd("servers", port);
-  console.log('Example app listening at http://%s:%s', host, port)
-})
+  console.log('Server listening at http://%s:%s', host, port)
+});
+
+
+//proxy server
+var proxyApp = express();
+var proxyRouter = express.Router();
+
+
+proxyRouter.get('*', function(req, res) {
+  client.srandmember("servers", function(err, value) {
+    console.log(req.url);
+    res.redirect("http://localhost:" + value + req.url);
+  });
+});
+
+proxyApp.use('/', proxyRouter);
+var proxyServer = proxyApp.listen(9000, function() {
+  var port = proxyServer.address().port;
+  console.log("Application listening at http://localhost:" + port);
+});
 
