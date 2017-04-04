@@ -1,6 +1,9 @@
 Cache, Proxies, Queues
 =========================
 
+## Instructions
+run ```node main.js``` to run the server. You can connect to ```http://localhost:9000``` to access the proxy server and use ```http://localhost:3000``` as the initial server.
+
 ### Conceptual Questions
 
 1. Describe some benefits and issues related to using Feature Flags.
